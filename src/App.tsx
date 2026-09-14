@@ -332,14 +332,23 @@ function HeroScrub() {
   useGSAP(() => {
     gsap.set('.hs-eyebrow',   { opacity: 0, y: 16 });
     gsap.set('.hs-title-word span', { yPercent: 108 });
-    gsap.set('.hs-sub',       { opacity: 0, y: 20 });
+    gsap.set('.hs-statement', { opacity: 0, y: 14 });
+    gsap.set('.hs-strip-cell', { opacity: 0, y: 14 });
     gsap.set('.hs-scroll-hint', { opacity: 0 });
+
+    const contours = gsap.utils.toArray<SVGPathElement>('.hs-contours path');
+    contours.forEach((p) => {
+      const len = p.getTotalLength();
+      gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+    });
 
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: .35 });
     tl.to('.hs-eyebrow',         { opacity: 1, y: 0, duration: .9 }, 0)
       .to('.hs-title-word span', { yPercent: 0, stagger: .13, duration: 1.1 }, .2)
-      .to('.hs-sub',             { opacity: 1, y: 0, duration: .9 }, .6)
-      .to('.hs-scroll-hint',     { opacity: 1, duration: .8 }, 1.4);
+      .to('.hs-statement',       { opacity: 1, y: 0, duration: .8 }, .9)
+      .to(contours,              { strokeDashoffset: 0, duration: 2.2, stagger: .18, ease: 'power2.inOut' }, .5)
+      .to('.hs-strip-cell',      { opacity: 1, y: 0, stagger: .07, duration: .8 }, 1.15)
+      .to('.hs-scroll-hint',     { opacity: 1, duration: .8 }, 1.6);
 
     // Parallax: canvas drifts up slightly while the hero scrubs
     // (scale keeps the fixed layer covered at every offset)
@@ -355,17 +364,33 @@ function HeroScrub() {
       },
     });
 
-    // Fade the hero HUD out as the content curtain slides over the canvas
+    // Cover lifts: solid paper fades away, revealing the frame scrub beneath
     gsap.to(
-      [heroTextRef.current, '.hs-scroll-hint', '.scrub-counter', '.scrub-progress-bar', '.hs-seal-wrap'],
+      [heroTextRef.current, '.hs-contours', '.hs-scroll-hint'],
       {
-        opacity: 0,
-        y: -40,
-        ease: 'power2.in',
+        autoAlpha: 0,
+        y: -60,
+        ease: 'power1.inOut',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'bottom 85%',
-          end: 'bottom 45%',
+          start: 'top top',
+          end: '+=820',
+          scrub: true,
+        },
+      }
+    );
+
+    // Scrub HUD (counter, progress, seal) surfaces as the cover lifts
+    gsap.fromTo(
+      ['.scrub-counter', '.scrub-progress-bar', '.hs-seal-wrap'],
+      { opacity: 0 },
+      {
+        opacity: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: '+=650',
           scrub: true,
         },
       }
@@ -376,40 +401,53 @@ function HeroScrub() {
     <div id="hero-scrub" ref={sectionRef}>
       <div className="hs-canvas-wrap">
         <canvas ref={canvasRef} className="hs-canvas" />
+        <div className="hs-canvas-scrim" />
         <div className="hs-canvas-fade" />
       </div>
 
-      <div className="hs-text" ref={heroTextRef}>
-        <span className="hs-eyebrow">The Standard Reserve</span>
-        <h1 className="hs-title">
-          <div className="hs-title-word"><span>Sovereign</span></div>
-          <div className="hs-title-word"><span>Onchain</span></div>
-          <div className="hs-title-word"><span><em>Central</em></span></div>
-          <div className="hs-title-word"><span>Bank.</span></div>
-        </h1>
-        <div className="hs-sub">
-          <p className="hs-tagline">
-            Tracks one number. Defends its own currency.<br />
-            Answers to no one.
-          </p>
-          <div className="hs-cta-group">
-            <Magnetic>
-              <a href="https://www.standardreserve.xyz/app/" className="hero-cta" target="_blank" rel="noopener">
-                Launch App ↗
-              </a>
-            </Magnetic>
-            <Magnetic>
-              <a href="#manifesto" className="hero-cta-ghost" onClick={(e) => { e.preventDefault(); scrollToTarget('#manifesto'); }}>
-                Learn More
-              </a>
-            </Magnetic>
+      {/* Cover — solid paper plane that fades to reveal the frame scrub */}
+      <div className="hs-cover" ref={heroTextRef}>
+        <div className="hs-cover-grid">
+          <div className="hs-text">
+            <span className="hs-eyebrow">Standard Reserve — Est. 2026</span>
+            <h1 className="hs-title">
+              <div className="hs-title-word"><span>The <em className="hl">sovereign</em></span></div>
+              <div className="hs-title-word"><span><em className="hl">onchain</em> central bank.</span></div>
+            </h1>
+            <p className="hs-statement"><span className="hs-statement-dash" />The bank is code.</p>
+          </div>
+          <div className="hs-strip">
+            <span className="hs-strip-cell">Monopoly — RSV</span>
+            <span className="hs-strip-cell">Charter № 001–1000</span>
+            <span className="hs-strip-cell">The Genesis — 09.14</span>
+            <span className="hs-strip-cta">
+              <Magnetic>
+                <a href="https://www.standardreserve.xyz/app/" className="hero-cta" target="_blank" rel="noopener">
+                  Launch App ↗
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="https://www.standardreserve.xyz/whitepaper/" className="hero-cta-ghost" target="_blank" rel="noopener">
+                  Whitepaper
+                  <svg className="cta-arrow" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+                    <path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z" />
+                  </svg>
+                </a>
+              </Magnetic>
+            </span>
           </div>
         </div>
-      </div>
 
-      <div className="hs-scroll-hint">
-        <div className="scroll-line" />
-        <span>Scroll</span>
+        <svg className="hs-contours" viewBox="0 0 400 500" aria-hidden="true">
+          <path d="M-32 474 Q170 54 430 360" />
+          <path d="M-42 505 Q174 92 438 392" />
+          <path d="M-50 538 Q180 128 448 426" />
+        </svg>
+
+        <div className="hs-scroll-hint">
+          <div className="scroll-line" />
+          <span>Scroll</span>
+        </div>
       </div>
 
       <div className="scrub-progress-bar" ref={progressRef} />
@@ -541,67 +579,6 @@ function Stats() {
   );
 }
 
-// ─── Marquee — CSS scroll + GSAP velocity boost ───────────────────────────────
-function Marquee() {
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    const track = trackRef.current!;
-    const tween = gsap.to(track, {
-      xPercent: -50,
-      ease: 'none',
-      duration: 28,
-      repeat: -1,
-    });
-
-    ScrollTrigger.create({
-      onUpdate: (self) => {
-        const v = Math.min(Math.abs(self.getVelocity()) / 900, 5);
-        gsap.to(tween, {
-          timeScale: 1 + v,
-          duration: .3,
-          overwrite: true,
-        });
-        gsap.to(track, {
-          skewX: gsap.utils.clamp(-6, 6, self.getVelocity() / -350),
-          duration: .4,
-          overwrite: 'auto',
-        });
-      },
-    });
-
-    // Ease back to normal after scroll stops
-    let lastScroll = 0;
-    ScrollTrigger.create({
-      onUpdate: () => { lastScroll = Date.now(); },
-    });
-    const settle = setInterval(() => {
-      if (Date.now() - lastScroll > 250) {
-        gsap.to(tween, { timeScale: 1, duration: .8, overwrite: true });
-        gsap.to(track, { skewX: 0, duration: .6, overwrite: 'auto' });
-      }
-    }, 300);
-
-    return () => { tween.kill(); clearInterval(settle); };
-  }, { scope: trackRef });
-
-  const items = [
-    'Bank Charters', 'Minting', 'Protocol Operations', 'Live Network State',
-    'Autonomous', 'One Price', 'Onchain', 'Sovereign', 'RSV', 'Trustless',
-  ];
-
-  return (
-    <div id="marquee-section">
-      <div className="marquee-track" ref={trackRef} aria-hidden="true">
-        {[...items, ...items].map((item, i) => (
-          <span key={i} className={`marquee-item${i % 5 === 0 ? ' hi' : ''}`}>
-            {item} <span className="dot" />
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ─── Features — horizontal scroll ─────────────────────────────────────────────
 function Features() {
@@ -996,12 +973,194 @@ function Protocol() {
   );
 }
 
+// ─── Charters — about-page artifact: corner-borders card w/ branch grid ──────
+const BankGlyph = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" {...props}>
+    <g fill="currentColor">
+      <path d="M11.4 2 9.9 4.2 V14.6 H8.9 V17.2 H7.8 V20 H11.4 Z" />
+      <path d="M12.6 2.9 14.1 5.0 V15.0 H15.1 V17.5 H16.2 V20 H12.6 Z" />
+      <path d="M11.4 8.9 H12.6 V9.3 H11.4 Z" />
+    </g>
+  </svg>
+);
+
+function Charters() {
+  const ref = useRef<HTMLElement>(null);
+  useMaskedReveal(ref);
+
+  useGSAP(() => {
+    gsap.from('.charter-card', {
+      opacity: 0, y: 44, duration: .9, ease: 'power3.out',
+      scrollTrigger: { trigger: '.charter-card', start: 'top 78%', once: true },
+    });
+    // Slots fill one by one — the charter comes to life
+    gsap.from('.charter-slot--filled', {
+      opacity: 0, scale: .5, duration: .45, ease: 'back.out(2.2)', stagger: .11,
+      scrollTrigger: { trigger: '.charter-grid', start: 'top 80%', once: true },
+    });
+    gsap.from('.charter-stat', {
+      opacity: 0, y: 20, duration: .7, stagger: .1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.charter-stats', start: 'top 88%', once: true },
+    });
+  }, { scope: ref });
+
+  return (
+    <section id="charters" ref={ref}>
+      <div className="charters-inner">
+        <div className="charters-copy">
+          <span className="charters-kicker">Charters</span>
+          <h2 className="charters-heading" data-split>
+            It all begins with <em className="hl">charters</em>.
+          </h2>
+          <p className="charters-body" data-split>
+            A bank charter is a soulbound NFT — a license to run your own bank
+            and receive RSV issuance. The genesis issue is 1,000 Founding
+            Charters. Afterwards, new charters are auctioned in ETH at a pace
+            set by monetary policy.
+          </p>
+          <p className="charters-body" data-split>
+            Bankers grow by buying expansion licenses for new branches. The
+            licenses are paid in RSV — and fully burned. New charters change
+            who splits the pie. Never the size of it.
+          </p>
+          <div className="charter-stats">
+            <div className="charter-stat">
+              <p className="charter-stat-num">1,000</p>
+              <p className="charter-stat-label">Founding Charters</p>
+            </div>
+            <div className="charter-stat">
+              <p className="charter-stat-num">09.14</p>
+              <p className="charter-stat-label">The Genesis Mint</p>
+            </div>
+            <div className="charter-stat">
+              <p className="charter-stat-num">0</p>
+              <p className="charter-stat-label">Vesting, unlocks, or insider allocation</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="charter-card corner-borders">
+          <div className="charter-head">
+            <span>Bank charter № 0042</span>
+            <span className="charter-count">7 / 10 branches</span>
+          </div>
+          <div className="charter-grid">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div className="charter-slot charter-slot--filled" key={i}><BankGlyph /></div>
+            ))}
+            {['08', '09', '10'].map((n) => (
+              <div className="charter-slot charter-slot--empty" key={n}>{n}</div>
+            ))}
+          </div>
+          <p className="charter-foot">
+            Each branch is won through a dutch auction and paid in RSV that is fully burned.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Flywheel — about-page artifact: four stations on one loop ────────────────
+function Flywheel() {
+  const ref = useRef<HTMLElement>(null);
+  useMaskedReveal(ref);
+
+  useGSAP(() => {
+    const arcs = gsap.utils.toArray<SVGPathElement>('.fw-ring');
+    arcs.forEach((arc, i) => {
+      const len = arc.getTotalLength();
+      gsap.set(arc, { strokeDasharray: len, strokeDashoffset: len });
+      gsap.to(arc, {
+        strokeDashoffset: 0, duration: 1.1, delay: i * .16, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '.fw-diagram', start: 'top 72%', once: true },
+      });
+    });
+    gsap.from('.fw-label', {
+      opacity: 0, y: 10, duration: .7, stagger: .13, ease: 'power2.out',
+      scrollTrigger: { trigger: '.fw-diagram', start: 'top 68%', once: true },
+    });
+    gsap.from('.fw-hub', {
+      opacity: 0, duration: .9, delay: .8,
+      scrollTrigger: { trigger: '.fw-diagram', start: 'top 68%', once: true },
+    });
+    // Orbiting dot traces the loop forever
+    gsap.to('.fw-orbit-dot', {
+      svgOrigin: '260 235', rotation: 360, duration: 14, ease: 'none', repeat: -1,
+    });
+  }, { scope: ref });
+
+  const items = [
+    { num: '01', title: 'Adoption',      body: 'Every new charter is paid in ETH. The treasury takes in hard assets that strengthen and defend RSV.' },
+    { num: '02', title: 'Expansion',     body: 'Charters expanding banks permanently shrinks the float. Emissions are met with burns to control inflation.' },
+    { num: '03', title: 'Fees',          body: 'Every trade deepens protocol liquidity and stacks the reserve. Volume in either direction feeds the bank.' },
+    { num: '04', title: 'Monetary policy', body: 'If capital leaves: the rate cuts, fees flip to buy-and-burn, and exit fees adjust. The system gets more defensive the worse it gets.' },
+  ];
+
+  return (
+    <section id="flywheel" ref={ref}>
+      <div className="fw-inner">
+        <div className="fw-copy">
+          <span className="charters-kicker">The Loop</span>
+          <h2 className="charters-heading" data-split>The <em className="hl">flywheel</em>.</h2>
+          <div className="fw-list">
+            {items.map((it) => (
+              <div className="fw-item" key={it.num}>
+                <p className="fw-num">{it.num}</p>
+                <div>
+                  <p className="fw-title">{it.title}</p>
+                  <p className="fw-body">{it.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <figure className="fw-diagram">
+          <svg viewBox="0 40 520 400" role="img" aria-label="Four flywheels — adoption, expansion, fees, and monetary policy — drawn as stations on one clockwise loop">
+            <defs>
+              <marker id="fw-arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                <path d="M2 1.5 L8 5 L2 8.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </marker>
+            </defs>
+            <path className="fw-ring" d="M 325.8 100.2 A 150 150 0 0 1 405.5 198.7" markerEnd="url(#fw-arr)" />
+            <path className="fw-ring" d="M 405.5 271.3 A 150 150 0 0 1 325.8 369.8" markerEnd="url(#fw-arr)" />
+            <path className="fw-ring" d="M 194.2 369.8 A 150 150 0 0 1 114.5 271.3" markerEnd="url(#fw-arr)" />
+            <path className="fw-ring" d="M 114.5 198.7 A 150 150 0 0 1 194.2 100.2" markerEnd="url(#fw-arr)" />
+            <circle className="fw-orbit-dot" cx="410" cy="235" r="4" />
+            <g className="fw-label">
+              <text className="fw-title-t" x="260" y="80" textAnchor="middle">ADOPTION</text>
+              <text className="fw-sub-t" x="260" y="98" textAnchor="middle">charters · ETH in</text>
+            </g>
+            <g className="fw-label">
+              <text className="fw-title-t" x="422" y="231" textAnchor="middle">EXPANSION</text>
+              <text className="fw-sub-t" x="422" y="250" textAnchor="middle">licenses purchased</text>
+            </g>
+            <g className="fw-label">
+              <text className="fw-title-t" x="260" y="382" textAnchor="middle">FEES</text>
+              <text className="fw-sub-t" x="260" y="400" textAnchor="middle">reserves and buybacks</text>
+            </g>
+            <g className="fw-label">
+              <text className="fw-title-t" x="98" y="222" textAnchor="middle">MONETARY</text>
+              <text className="fw-title-t" x="98" y="239" textAnchor="middle">POLICY</text>
+              <text className="fw-sub-t" x="98" y="259" textAnchor="middle">rate cuts and exit fees</text>
+            </g>
+            <g className="fw-hub">
+              <text x="260" y="230" textAnchor="middle">HARD ASSETS IN</text>
+              <text x="260" y="252" textAnchor="middle">SOFT SUPPLY OUT</text>
+            </g>
+          </svg>
+        </figure>
+      </div>
+    </section>
+  );
+}
+
 // ─── Final CTA — theme flips to dark while pinned ─────────────────────────────
 function FinalCTA() {
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(() => {
-    ['.live-badge', '.final-heading', '.final-sub', '.btn-group'].forEach((sel, i) => {
+    ['.live-badge', '.final-heading', '.final-sub', '.btn-group', '.final-disclaimer'].forEach((sel, i) => {
       gsap.from(sel, {
         opacity: 0, y: 44 - i * 5, duration: .9 + i * .06, ease: 'power3.out',
         scrollTrigger: { trigger: sel, start: 'top 85%', once: true },
@@ -1047,6 +1206,11 @@ function FinalCTA() {
             </a>
           </Magnetic>
         </div>
+        <p className="final-disclaimer">
+          STANDARD is an experimental onchain protocol. It holds no deposits,
+          offers no accounts, and is not a regulated financial institution of
+          any kind. Nothing here is investment advice. Participate at your own risk.
+        </p>
       </div>
       <div className="final-orb" aria-hidden="true" />
     </section>
@@ -1129,10 +1293,11 @@ export default function App() {
         <HeroScrub />
         <Manifesto />
         <Stats />
-        <Marquee />
         <Charts />
         <Features />
         <Protocol />
+        <Charters />
+        <Flywheel />
         <FinalCTA />
       </main>
       <Footer />

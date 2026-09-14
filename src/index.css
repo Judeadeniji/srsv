@@ -328,8 +328,34 @@ body::after {
   inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100svh;
   overflow: hidden;
   z-index: 0;
+}
+
+/* Mild bottom wash over the frames; the cover itself is solid paper */
+.hs-canvas-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(248,247,244,.35), rgba(248,247,244,0) 45%);
+}
+
+/* The cover layer is its own paper plane — fully readable, fades to reveal the scrub */
+.hs-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: var(--bg);
+  transition: background-color .7s var(--ease-out);
+}
+.hs-cover-grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(6rem, 14vh, 9rem) clamp(1.5rem, 5vw, 5rem) clamp(4.5rem, 9vh, 6.5rem);
 }
 
 /* Content after the hero slides over the fixed canvas */
@@ -360,59 +386,111 @@ main > :where(:not(#hero-scrub)) {
 }
 
 .hs-text {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  padding: 0 1.5rem 2.5rem;
-  pointer-events: none;
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* Top block: editorial cover composition */
+.hs-grid {
+  max-width: 1100px;
 }
 .hs-eyebrow {
   font-size: var(--t-xs);
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 1.5rem;
   display: block;
-  pointer-events: auto;
+  margin-bottom: 2rem;
 }
 .hs-title {
-  font-size: var(--t-4xl);
-  line-height: .9;
-  letter-spacing: -.025em;
+  font-size: clamp(2.8rem, 7.2vw, 8rem);
+  line-height: .98;
+  letter-spacing: -.03em;
   color: var(--text);
-  max-width: 13ch;
-  margin-bottom: 2.5rem;
 }
 .hs-title-word {
   display: block;
   overflow: hidden;
 }
 .hs-title-word span { display: block; will-change: transform; }
-.hs-title em {
+.hs-title .hl {
   font-style: italic;
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--border);
+  color: var(--muted);
+}
+.hs-statement {
+  display: inline-flex;
+  align-items: center;
+  gap: .8rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  letter-spacing: -.01em;
+  color: var(--text);
+  margin-top: 2.2rem;
+}
+.hs-statement-dash {
+  width: 34px;
+  height: 1px;
+  background: var(--text);
+  opacity: .55;
 }
 
-.hs-sub {
+/* Bottom strip: full-width hairline data strip + CTAs */
+.hs-strip {
+  border-top: 1px solid var(--border);
+  padding-top: 1.4rem;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  flex-wrap: wrap;
   pointer-events: auto;
 }
-.hs-tagline {
-  font-size: var(--t-lg);
+.hs-strip-cell {
+  font-size: var(--t-xs);
+  letter-spacing: .14em;
+  text-transform: uppercase;
   color: var(--muted);
-  max-width: 42ch;
-  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: color .3s;
 }
-.hs-cta-group {
-  display: flex;
-  gap: 1rem;
-  flex-shrink: 0;
+.hs-strip-cell:hover { color: var(--text); }
+.hs-strip-cta {
+  margin-left: auto;
+  display: inline-flex;
+  gap: .8rem;
+}
+
+.cta-arrow {
+  width: 1em;
+  height: 1em;
+  transition: transform .35s var(--ease-out);
+}
+.hero-cta-ghost:hover .cta-arrow,
+.hero-cta:hover .cta-arrow { transform: translateX(4px); }
+
+.cta-arrow {
+  width: 1em;
+  height: 1em;
+  transition: transform .35s var(--ease-out);
+}
+.hero-cta-ghost:hover .cta-arrow,
+.hero-cta:hover .cta-arrow { transform: translateX(4px); }
+
+/* Hero contour lines — whitepaper motif, inside the cover */
+.hs-contours {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 5rem);
+  bottom: clamp(6rem, 16vh, 10rem);
+  width: min(34vw, 460px);
+  height: auto;
+  pointer-events: none;
+  opacity: .55;
+}
+.hs-contours path {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1;
+  opacity: .5;
 }
 
 .hero-cta {
@@ -450,7 +528,7 @@ main > :where(:not(#hero-scrub)) {
 
 .hs-scroll-hint {
   position: fixed;
-  bottom: 2.5rem;
+  bottom: 2.2rem;
   right: 3rem;
   z-index: 1;
   display: flex;
@@ -605,37 +683,6 @@ main > :where(:not(#hero-scrub)) {
   color: var(--muted);
 }
 
-/* ─── Marquee ─────────────────────────────────────────── */
-#marquee-section {
-  padding: 2.5rem 0;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  transition: background .7s var(--ease-out), border-color .7s var(--ease-out);
-}
-.marquee-track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-}
-.marquee-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 0 2rem;
-  white-space: nowrap;
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
-  letter-spacing: -.01em;
-  color: var(--muted);
-}
-.marquee-item .dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--brand);
-  flex-shrink: 0;
-}
-.marquee-item.hi { color: var(--text); }
-
 /* ─── Charts — whitepaper figures ────────────────────── */
 #charts {
   padding: 8rem 1.5rem;
@@ -725,13 +772,23 @@ main > :where(:not(#hero-scrub)) {
 .key-band { background: color-mix(in srgb, var(--text) 14%, transparent); height: 10px; }
 .key-band-b { background: color-mix(in srgb, var(--brand) 26%, transparent); }
 
+/* Figure plate: no box — hairline baseline + register marks, like a book plate */
 .chart-fig {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: 1.25rem;
-  padding: 2rem 1.5rem 1.2rem;
-  transition: background .7s var(--ease-out), border-color .7s var(--ease-out);
+  position: relative;
+  padding: 2.2rem 0 0;
 }
+.chart-fig::before,
+.chart-fig::after {
+  content: '+';
+  position: absolute;
+  top: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  opacity: .7;
+}
+.chart-fig::before { left: -4px; }
+.chart-fig::after { right: -4px; }
 .chart-fig svg {
   width: 100%;
   height: auto;
@@ -841,15 +898,21 @@ main > :where(:not(#hero-scrub)) {
   font-variant-numeric: tabular-nums;
 }
 .feature-tag {
-  display: inline-block;
-  padding: .3rem .8rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
   font-size: var(--t-xs);
-  letter-spacing: .1em;
+  letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 2rem;
+}
+.feature-tag::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--text);
+  opacity: .5;
 }
 .feature-title {
   font-size: clamp(2.5rem, 4vw, 5rem);
@@ -883,19 +946,30 @@ main > :where(:not(#hero-scrub)) {
 }
 .feature-link:hover { opacity: 1; }
 .feature-link:hover .ml-arrow { transform: translate(4px, -4px); }
+/* Feature visual: free-floating rings on the page — no container box */
 .feature-visual {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 2rem;
-  overflow: hidden;
-  border: 1px solid var(--border);
   position: relative;
-  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
   max-width: 480px;
   will-change: transform;
+}
+.feature-visual::before,
+.feature-visual::after {
+  content: '';
+  position: absolute;
+  background: var(--border);
+}
+.feature-visual::before {
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+}
+.feature-visual::after {
+  top: 0; bottom: 0; left: 50%;
+  width: 1px;
 }
 .feature-visual-inner {
   width: 80%;
@@ -921,8 +995,8 @@ main > :where(:not(#hero-scrub)) {
 .feature-icon-glyph {
   font-size: clamp(3rem, 6vw, 7rem);
   letter-spacing: -.04em;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--border);
+  color: var(--muted);
+  opacity: .5;
   font-style: italic;
   z-index: 2;
   position: relative;
@@ -992,15 +1066,12 @@ main > :where(:not(#hero-scrub)) {
   display: block;
   transition: color .4s;
 }
+/* Bare glyph instead of an icon box */
 .card-icon-wrap {
-  width: 48px; height: 48px;
-  border: 1px solid var(--border);
-  border-radius: .75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-  font-size: 1.4rem;
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 2.2rem;
+  color: var(--text);
   will-change: transform;
 }
 .card-title {
@@ -1016,6 +1087,217 @@ main > :where(:not(#hero-scrub)) {
   color: var(--muted);
   line-height: 1.7;
   transition: color .4s;
+}
+
+/* ─── Charters — about-page artifacts ────────────────── */
+/* corner-borders: staggered hairline frame — the about-page signature.
+   Top-left rule hugs the card; bottom-right rule is offset, creating
+   the double-corner print-registration look. */
+.corner-borders {
+  position: relative;
+}
+.corner-borders::before,
+.corner-borders::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.corner-borders::before {
+  inset: 0;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.corner-borders::after {
+  inset: 10px -10px -10px 10px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+#charters {
+  padding: 9rem 1.5rem;
+}
+.charters-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 6rem;
+  align-items: center;
+}
+.charters-kicker {
+  font-size: var(--t-xs);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--brand);
+  display: block;
+  margin-bottom: 1.6rem;
+}
+.charters-heading {
+  font-size: clamp(2.6rem, 4.5vw, 5rem);
+  letter-spacing: -.03em;
+  line-height: 1;
+  margin-bottom: 2.4rem;
+}
+.charters-heading .hl {
+  font-style: italic;
+  color: var(--muted);
+}
+.charters-body {
+  font-size: var(--t-base);
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 1.4rem;
+  max-width: 52ch;
+}
+.charter-stats {
+  display: flex;
+  gap: 3.5rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+.charter-stat-num {
+  font-size: clamp(2rem, 3vw, 3.2rem);
+  letter-spacing: -.03em;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.charter-stat-label {
+  font-size: var(--t-xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  max-width: 20ch;
+}
+
+/* The charter card — bank license with branch slots */
+.charter-card {
+  padding: 2.4rem;
+  background: var(--surface);
+  transition: background .7s var(--ease-out);
+}
+.charter-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--t-xs);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 2rem;
+}
+.charter-count {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.charter-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 1.8rem;
+}
+.charter-slot {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--t-xs);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  will-change: transform;
+}
+.charter-slot--filled {
+  color: var(--text);
+  border-color: var(--muted);
+}
+.charter-slot--empty {
+  opacity: .45;
+}
+.charter-foot {
+  font-size: var(--t-xs);
+  color: var(--muted);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 1.2rem;
+}
+
+/* ─── Flywheel — about-page artifact ──────────────────── */
+#flywheel {
+  padding: 9rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.fw-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 6rem;
+  align-items: center;
+}
+.fw-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2.5rem;
+}
+.fw-item {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1.2rem;
+  padding: 1.4rem 0;
+  border-top: 1px solid var(--border);
+}
+.fw-item:last-child { border-bottom: 1px solid var(--border); }
+.fw-num {
+  font-size: var(--t-xs);
+  letter-spacing: .18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  padding-top: .3rem;
+}
+.fw-title {
+  font-size: var(--t-lg);
+  letter-spacing: -.015em;
+  color: var(--text);
+  margin-bottom: .4rem;
+}
+.fw-body {
+  font-size: var(--t-sm);
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 46ch;
+}
+.fw-diagram svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.fw-ring {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.25;
+  opacity: .8;
+  color: var(--text);
+}
+.fw-orbit-dot {
+  fill: var(--brand);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--brand) 60%, transparent));
+}
+.fw-title-t {
+  fill: var(--text);
+  font-size: 15px;
+  letter-spacing: .18em;
+}
+.fw-sub-t {
+  fill: var(--muted);
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+.fw-hub text {
+  fill: var(--brand);
+  font-size: 13px;
+  letter-spacing: .2em;
 }
 
 /* ─── Final CTA ──────────────────────────────────────── */
@@ -1049,16 +1331,19 @@ main > :where(:not(#hero-scrub)) {
 .live-badge {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: .35rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
+  gap: .6rem;
   font-size: var(--t-xs);
-  letter-spacing: .12em;
+  letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--text);
+  color: var(--muted);
   margin-bottom: 2.5rem;
-  background: var(--surface);
+}
+.live-badge::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--text);
+  opacity: .4;
 }
 .live-badge .pulse {
   width: 6px; height: 6px;
@@ -1078,8 +1363,7 @@ main > :where(:not(#hero-scrub)) {
 }
 .final-heading em {
   font-style: italic;
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--border);
+  color: var(--muted);
 }
 .final-sub {
   font-size: var(--t-lg);
@@ -1088,11 +1372,32 @@ main > :where(:not(#hero-scrub)) {
   margin: 0 auto 3.5rem;
   line-height: 1.7;
 }
+
+/* Finale actions — largest on the page; this is the last thing visitors read */
 .btn-group {
   display: flex;
-  gap: 1rem;
+  gap: 1.1rem;
   justify-content: center;
   flex-wrap: wrap;
+}
+.btn-group .btn-primary,
+.btn-group .btn-outline {
+  padding: 1.05rem 2.4rem;
+  font-size: var(--t-base);
+}
+
+/* Fine print — visually and semantically subordinate to the buttons:
+   small, muted, capped measure, separated by a hairline it can't overpower */
+.final-disclaimer {
+  margin: 4rem auto 0;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--border);
+  max-width: 62ch;
+  font-size: var(--t-xs);
+  letter-spacing: .04em;
+  line-height: 1.8;
+  color: var(--muted);
+  opacity: .75;
 }
 .btn-primary {
   display: inline-flex;
@@ -1216,13 +1521,31 @@ main > :where(:not(#hero-scrub)) {
   .seal-svg, .marquee-track { animation: none !important; }
 }
 
+@media (max-width: 1024px) {
+  .hs-contours { width: 30vw; opacity: .35; }
+}
+
 /* ─── Mobile ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   #hero-scrub { height: 900vh; }
   #nav { padding: 1.2rem 1.5rem; }
+  .hs-contours { display: none; }
+  .hs-text { padding: 5.5rem 1.5rem 4.5rem; }
+  .hs-title { font-size: clamp(2.5rem, 11.5vw, 3.4rem); }
+  .hs-statement { margin-top: 1.6rem; }
+  .hs-strip { gap: 1rem 1.4rem; padding-top: 1.1rem; }
+  .hs-strip-cta { margin-left: 0; }
+  .scrub-counter { left: 1.5rem; bottom: 1.6rem; }
+  .hs-scroll-hint { right: 1.2rem; bottom: 1.6rem; }
+  .chart-legend { flex-wrap: wrap; }
+  .charters-inner, .fw-inner { grid-template-columns: 1fr; gap: 3.5rem; }
+  #charters, #flywheel { padding: 6rem 1.5rem; }
+  .charter-stats { gap: 2rem; }
+  .charter-grid { grid-template-columns: repeat(5, 1fr); }
+  .fw-diagram { max-width: 440px; }
   .nav-links { display: none; }
   .hs-text { padding: 0 1.5rem 3rem; }
-  .hs-sub { flex-direction: column; align-items: flex-start; }
+
   .hs-seal-wrap { display: none; }
   .manifesto-inner { grid-template-columns: 1fr; gap: 3rem; }
   #manifesto { padding: 6rem 1.5rem; }
