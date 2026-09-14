@@ -7,10 +7,18 @@ export default function FinalCTA() {
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(() => {
-    ['.live-badge', '.final-heading', '.final-sub', '.btn-group', '.final-disclaimer'].forEach((sel, i) => {
+    // Retuned cascade for the finale: heading lands hardest, legal whispers in last
+    const seq: Array<[string, number]> = [
+      ['.live-badge', 0],
+      ['.final-heading', .12],
+      ['.final-sub', .24],
+      ['.btn-group', .34],
+      ['.final-disclaimer', .5],
+    ];
+    seq.forEach(([sel, delay], i) => {
       gsap.from(sel, {
-        opacity: 0, y: 44 - i * 5, duration: .9 + i * .06, ease: 'power3.out',
-        scrollTrigger: { trigger: sel, start: 'top 85%', once: true },
+        opacity: 0, y: 48 - i * 8, duration: .95, delay, ease: 'power3.out',
+        scrollTrigger: { trigger: sel, start: 'top 88%', once: true },
       });
     });
 
@@ -53,14 +61,18 @@ export default function FinalCTA() {
             </a>
           </Magnetic>
         </div>
-        <p className="final-disclaimer">
-          This is an unofficial concept page created for design demonstration
-          purposes only. It is not affiliated with, endorsed by, or connected
-          to Standard Reserve — the official site is standardreserve.xyz.
-          STANDARD is an experimental onchain protocol: it holds no deposits,
-          offers no accounts, and is not a regulated financial institution of
-          any kind. Nothing here is investment advice. Participate at your own risk.
-        </p>
+        <div className="final-disclaimer">
+          <p>
+            This is an unofficial concept page, built for design demonstration
+            only. It is not affiliated with, endorsed by, or connected to
+            Standard Reserve — the official site is standardreserve.xyz.
+          </p>
+          <p>
+            STANDARD is an experimental onchain protocol. It holds no deposits,
+            offers no accounts, and is not a regulated financial institution.
+            Nothing here is investment advice. Participate at your own risk.
+          </p>
+        </div>
       </div>
       <div className="final-orb" aria-hidden="true" />
     </section>

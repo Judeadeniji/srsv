@@ -1386,18 +1386,21 @@ main > :where(:not(#hero-scrub)) {
   font-size: var(--t-base);
 }
 
-/* Fine print — visually and semantically subordinate to the buttons:
-   small, muted, capped measure, separated by a hairline it can't overpower */
+/* Fine print — two airy paragraphs behind a hairline; whisper-quiet */
 .final-disclaimer {
-  margin: 4rem auto 0;
+  margin: 4.5rem auto 0;
   padding-top: 1.6rem;
   border-top: 1px solid var(--border);
-  max-width: 62ch;
+  max-width: 58ch;
+  display: grid;
+  gap: 1.1rem;
+}
+.final-disclaimer p {
   font-size: var(--t-xs);
-  letter-spacing: .04em;
-  line-height: 1.8;
+  letter-spacing: .03em;
+  line-height: 1.9;
   color: var(--muted);
-  opacity: .75;
+  opacity: .8;
 }
 .btn-primary {
   display: inline-flex;
@@ -1523,6 +1526,13 @@ main > :where(:not(#hero-scrub)) {
 
 @media (max-width: 1024px) {
   .hs-contours { width: 30vw; opacity: .35; }
+  .manifesto-inner { gap: 4rem; }
+  .charts-head { gap: 2.5rem; margin-bottom: 5rem; }
+  .chart-block { gap: 2.5rem; }
+  .protocol-header { gap: 2.5rem; margin-bottom: 4rem; }
+  .charters-inner, .fw-inner { gap: 4rem; }
+  .feature-panel { padding: 9rem 3rem 0; gap: 3rem; }
+  #manifesto, #charts, #protocol, #charters, #flywheel { padding-left: 2.5rem; padding-right: 2.5rem; }
 }
 
 /* ─── Mobile ──────────────────────────────────────────── */
@@ -1530,7 +1540,7 @@ main > :where(:not(#hero-scrub)) {
   #hero-scrub { height: 900vh; }
   #nav { padding: 1.2rem 1.5rem; }
   .hs-contours { display: none; }
-  .hs-text { padding: 5.5rem 1.5rem 4.5rem; }
+  .hs-cover-grid { padding: 5.5rem 1.5rem 4.5rem; }
   .hs-title { font-size: clamp(2.5rem, 11.5vw, 3.4rem); }
   .hs-statement { margin-top: 1.6rem; }
   .hs-strip { gap: 1rem 1.4rem; padding-top: 1.1rem; }
@@ -1544,7 +1554,7 @@ main > :where(:not(#hero-scrub)) {
   .charter-grid { grid-template-columns: repeat(5, 1fr); }
   .fw-diagram { max-width: 440px; }
   .nav-links { display: none; }
-  .hs-text { padding: 0 1.5rem 3rem; }
+  .hs-strip { flex-direction: column; align-items: flex-start; }
 
   .hs-seal-wrap { display: none; }
   .manifesto-inner { grid-template-columns: 1fr; gap: 3rem; }
@@ -1553,7 +1563,7 @@ main > :where(:not(#hero-scrub)) {
   .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 2.5rem 0; }
   .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
   .stat-item:nth-child(odd) { padding-left: 0; }
-  .feature-panel { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 2rem; align-content: center; }
+  .feature-panel { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 1.8rem; align-content: center; }
   .feature-visual { max-width: 280px; aspect-ratio: 1; }
   .protocol-cards { grid-template-columns: 1fr; }
   .protocol-header { grid-template-columns: 1fr; }
@@ -1564,4 +1574,21 @@ main > :where(:not(#hero-scrub)) {
   .footer-meta { align-items: flex-start; }
   body { cursor: auto; }
   #cursor-dot, #cursor-ring { display: none; }
+}
+
+/* ─── Small phones ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .charter-stats { flex-direction: column; gap: 1.8rem; }
+  .btn-group { flex-direction: column; align-items: stretch; }
+  .btn-group .btn-primary,
+  .btn-group .btn-outline { justify-content: center; }
+  .final-heading { font-size: clamp(2.6rem, 13vw, 4.2rem); }
+  .final-disclaimer { max-width: 100%; }
+  #final-cta { min-height: auto; padding: 7rem 1.5rem; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-item { border-right: none !important; }
+  .stat-item:nth-child(odd) { border-right: none !important; }
+  .footer-wordmark { font-size: 17.5vw; }
+  .protocol-heading, .charts-heading, .charters-heading { font-size: clamp(2.4rem, 10.5vw, 3.6rem); }
+  .manifesto-statement { font-size: clamp(1.7rem, 7.5vw, 2.4rem); }
 }

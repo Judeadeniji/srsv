@@ -11,7 +11,7 @@ export default function Seal() {
         </defs>
         <text className="seal-text">
           <textPath href="#seal-circle">
-            STANDARD RESERVE · SOVEREIGN · ONCHAIN · RSV ·
+            STANDARD RESERVE · SOVEREIGN · ONCHAIN · $STANDARD ·
           </textPath>
         </text>
       </svg>

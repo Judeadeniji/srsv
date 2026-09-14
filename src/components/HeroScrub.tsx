@@ -33,27 +33,42 @@ export default function HeroScrub() {
       images.push(img);
     }
 
+    // Render at DEVICE resolution with a cover-fit so the 1280x720 source is
+    // resampled once by the browser's best filter — not stretched by CSS.
+    let vw = 0, vh = 0;
+    const fit = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      vw = Math.round(window.innerWidth * dpr);
+      vh = Math.round(window.innerHeight * dpr);
+      canvas.width = vw;
+      canvas.height = vh;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+    };
+    fit();
+
+    const drawCover = (img: HTMLImageElement) => {
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      if (!iw || !ih) return false;
+      const s = Math.max(vw / iw, vh / ih);          // cover math
+      const dw = iw * s, dh = ih * s;
+      ctx.clearRect(0, 0, vw, vh);
+      ctx.drawImage(img, (vw - dw) / 2, (vh - dh) / 2, dw, dh);
+      return true;
+    };
+
     const draw = (f: number) => {
       const idx = Math.min(Math.round(f), total - 1);
       const img = images[idx];
-      if (img?.complete && img.naturalWidth) {
-        if (!canvas.width) { canvas.width = img.naturalWidth; canvas.height = img.naturalHeight; }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-      }
+      if (img?.complete && img.naturalWidth) drawCover(img);
     };
 
     // Draw first frame immediately so canvas isn't blank
-    images[0].onload = () => {
-      canvas.width  = images[0].naturalWidth;
-      canvas.height = images[0].naturalHeight;
-      draw(0);
-    };
-    if (images[0].complete && images[0].naturalWidth) {
-      canvas.width  = images[0].naturalWidth;
-      canvas.height = images[0].naturalHeight;
-      draw(0);
-    }
+    images[0].onload = () => draw(0);
+    draw(0);
+
+    const onResize = () => { fit(); draw(state.f); };
+    window.addEventListener('resize', onResize);
 
     const state = { f: 0 };
     tweenRef.current = gsap.to(state, {
@@ -79,6 +94,7 @@ export default function HeroScrub() {
     return () => {
       tweenRef.current?.kill();
       ScrollTrigger.getById('hero-scrub-st')?.kill();
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
@@ -105,10 +121,10 @@ export default function HeroScrub() {
       .to('.hs-scroll-hint',     { opacity: 1, duration: .8 }, 1.6);
 
     // Parallax: canvas drifts up slightly while the hero scrubs
-    // (scale keeps the fixed layer covered at every offset)
+    // (tiny 1.03 headroom only — overscale would resample past native res)
     gsap.to('.hs-canvas', {
-      yPercent: -5,
-      scale: 1.12,
+      yPercent: -2.5,
+      scale: 1.03,
       ease: 'none',
       scrollTrigger: {
         trigger: sectionRef.current,
@@ -171,7 +187,7 @@ export default function HeroScrub() {
             <p className="hs-statement"><span className="hs-statement-dash" />The bank is code.</p>
           </div>
           <div className="hs-strip">
-            <span className="hs-strip-cell">Monopoly — RSV</span>
+            <span className="hs-strip-cell">Currency — $STANDARD</span>
             <span className="hs-strip-cell">Charter № 001–1000</span>
             <span className="hs-strip-cell">The Genesis — 09.14</span>
             <span className="hs-strip-cta">

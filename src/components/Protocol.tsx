@@ -25,12 +25,12 @@ export default function Protocol() {
   }, { scope: ref });
 
   const cards = [
-    { num: '001', icon: '◯', title: 'Single Invariant',   body: 'The protocol has one job: keep RSV equal to $1.00. Every mechanism flows from this single invariant.' },
-    { num: '002', icon: '⊞', title: 'Collateral System',  body: 'Approved banks hold qualified collateral. The protocol enforces collateral ratios mechanically and continuously.' },
-    { num: '003', icon: '↔', title: 'Supply Elasticity',  body: 'RSV supply expands and contracts based on price signal alone. No human triggers. Always-on monetary policy.' },
-    { num: '004', icon: '◻', title: 'Charter Framework',  body: 'Banks earn the right to mint RSV through an onchain charter defining limits, obligations, and revocation conditions.' },
-    { num: '005', icon: '⌀', title: 'Zero Governance',    body: 'There is no governance token. No DAO vote can change protocol rules. Parameters are set at genesis.' },
-    { num: '006', icon: '⬡', title: 'Transparency Layer', body: 'All operations are observable onchain. Minting events, charter states, reserve positions — fully public, always.' },
+    { num: '001', icon: '◯', title: 'Single Invariant',   body: 'One currency, one market, one signal. Every mechanism in the economy flows from net ETH flow through the canonical pool.' },
+    { num: '002', icon: '⊞', title: 'Hard Reserve',       body: 'In expansion, trading fees route to the expansion vault — buying tokenized gold and deepening protocol-owned liquidity.' },
+    { num: '003', icon: '↔', title: 'Supply Elasticity',  body: 'Issuance loosens on inflow and tightens on outflow. The money supply breathes with the capital that backs it.' },
+    { num: '004', icon: '◻', title: 'Full Burn Economy',  body: 'Expansion licenses and charters are paid in $STANDARD and fully burned. Spending removes supply — permanently.' },
+    { num: '005', icon: '⌀', title: 'Zero Governance',    body: 'No governance token. No DAO vote. Parameters are set at genesis and enforced by code the bank cannot disobey.' },
+    { num: '006', icon: '⬡', title: 'Inverted Bank Run',  body: 'Withdrawals mint supply, but the resolution fee burns half and pays the rest to the bankers who stayed. Sprinters fund the still.' },
   ];
 
   return (

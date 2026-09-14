@@ -198,7 +198,7 @@ export default function Charts() {
               <text className="chart-axis chart-fade" x="672" y="144" textAnchor="end">target $1.00</text>
             </svg>
             <figcaption className="chart-caption chart-fade">
-              Every path through the economy either burns RSV or brings the bank hard assets
+              Every path through the economy either burns $STANDARD or brings the bank hard assets
             </figcaption>
           </figure>
         </div>

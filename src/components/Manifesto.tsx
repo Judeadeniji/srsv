@@ -31,11 +31,12 @@ export default function Manifesto() {
         </div>
         <div className="manifesto-right">
           <p className="manifesto-body" data-split>
-            Standard Reserve is not a stablecoin. It is not a DAO. It is a
-            fully autonomous onchain central bank — governed only by the rules
-            encoded in its protocol. It tracks one number: the price of RSV.
-            It expands and contracts supply to defend that price. No exceptions.
-            No governance theatre. No human override.
+            STANDARD is not a stablecoin, and it is not a DAO. It is a closed
+            monetary economy run by an autonomous central bank — 4,000 lines of
+            immutable code. One currency. One market. One signal: net ETH flow
+            through the canonical pool. Capital flows in, issuance loosens and
+            hard reserves stack. Capital flows out, the bank buys back and
+            burns. No committee. No vote. No human override.
           </p>
           <a href="https://www.standardreserve.xyz/app/" className="manifesto-link" target="_blank" rel="noopener">
             <span className="ml-text">Explore the protocol</span>

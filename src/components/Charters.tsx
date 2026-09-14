@@ -44,14 +44,14 @@ export default function Charters() {
           </h2>
           <p className="charters-body" data-split>
             A bank charter is a soulbound NFT — a license to run your own bank
-            and receive RSV issuance. The genesis issue is 1,000 Founding
-            Charters. Afterwards, new charters are auctioned in ETH at a pace
+            and receive $STANDARD issuance. The genesis issue is 1,000 Founding
+            Charters. Afterwards, new charters are auctioned in ETH, at a pace
             set by monetary policy.
           </p>
           <p className="charters-body" data-split>
             Bankers grow by buying expansion licenses for new branches. The
-            licenses are paid in RSV — and fully burned. New charters change
-            who splits the pie. Never the size of it.
+            licenses are paid in $STANDARD — and fully burned. New charters
+            change who splits the pie. Never the size of it.
           </p>
           <div className="charter-stats">
             <div className="charter-stat">
@@ -83,7 +83,7 @@ export default function Charters() {
             ))}
           </div>
           <p className="charter-foot">
-            Each branch is won through a dutch auction and paid in RSV that is fully burned.
+            Each branch is won through a dutch auction and paid in $STANDARD that is fully burned.
           </p>
         </div>
       </div>

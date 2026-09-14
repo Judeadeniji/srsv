@@ -32,10 +32,10 @@ export default function Flywheel() {
   }, { scope: ref });
 
   const items = [
-    { num: '01', title: 'Adoption',        body: 'Every new charter is paid in ETH. The treasury takes in hard assets that strengthen and defend RSV.' },
-    { num: '02', title: 'Expansion',       body: 'Charters expanding banks permanently shrinks the float. Emissions are met with burns to control inflation.' },
-    { num: '03', title: 'Fees',            body: 'Every trade deepens protocol liquidity and stacks the reserve. Volume in either direction feeds the bank.' },
-    { num: '04', title: 'Monetary policy', body: 'If capital leaves: the rate cuts, fees flip to buy-and-burn, and exit fees adjust. The system gets more defensive the worse it gets.' },
+    { num: '01', title: 'Adoption',        body: 'Every new charter is paid in ETH. The treasury takes in hard assets that strengthen and defend $STANDARD.' },
+    { num: '02', title: 'Expansion',       body: 'Licenses to expand banks permanently shrink the float. Emissions are met with burns to control runway inflation.' },
+    { num: '03', title: 'Fees',            body: 'Every trade deepens protocol liquidity, stacks the hard reserve in surplus, and funds buybacks in deficit. Volume in either direction feeds the bank.' },
+    { num: '04', title: 'Monetary policy', body: 'Policy is decided in real time. If capital leaves: the rate cuts, fees flip to buy-and-burn, and the exit fee adjusts. The system gets more defensive the worse it gets.' },
   ];
 
   return (
