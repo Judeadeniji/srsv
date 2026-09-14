@@ -1094,7 +1094,7 @@ function Footer() {
         </ul>
         <div className="footer-meta">
           <span className="footer-clock">UTC <span ref={clockRef}>00:00:00</span></span>
-          <span className="footer-copy">© 2024 Standard Reserve</span>
+          <span className="footer-copy">&copy; {new Date().getFullYear()} Standard Reserve</span>
           <span className="footer-copy" style={{ marginTop: '0.2rem' }}>
             Design by <a href="https://x.com/pauline_fathima" target="_blank" rel="noopener" style={{ color: 'inherit' }}>Pauline Fathima</a>
           </span>
